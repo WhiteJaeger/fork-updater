@@ -35,15 +35,15 @@
                     <tbody>
 
                         {% for forkName in names %}
-                            <tr>
+                            <tr id="{{ fork_urls[loop.index0] }}">
                                 <td>{{ forkName }}</td>
-                                <td>{{ fork_urls[loop.index0] }}</td>
+                                <td><a href="{{ fork_urls[loop.index0] }}" target="_blank">{{ fork_urls[loop.index0] }}</a></td>
                                 <td>
-                                    <input class="btn btn-outline-secondary mb-2" id="submit-button" type="submit" value="Update">
-                                    <input class="btn btn-outline-secondary mb-2" id="submit-button" type="submit" value="Update (Keep Fork)">
-                                    <input class="btn btn-outline-secondary mb-2" id="submit-button" type="submit" value="Update (Keep Upstream)">
+                                    <input class="btn btn-outline-secondary mb-2" id="update" type="submit" value="Update">
+                                    <input class="btn btn-outline-secondary mb-2" id="update-keep-fork" type="submit" value="Update (Keep Fork)">
+                                    <input class="btn btn-outline-secondary mb-2" id="update-keep-upstream" type="submit" value="Update (Keep Upstream)">
                                 </td>
-                        </tr>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
