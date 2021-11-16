@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <link rel="shortcut icon" href="#">
+
+    <title>Home</title>
+</head>
+<body>
+
+
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="container-md">
+
+                <table class="table table-bordered table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Fork Name</th>
+                        <th scope="col" class="text-center">URL</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for forkName in names %}
+                            <tr>
+                                <td>{{ forkName }}</td>
+                                <td>{{ fork_urls[loop.index0] }}</td>
+                                <td>
+                                    <input class="btn btn-outline-secondary mb-2" id="submit-button" type="submit" value="Update">
+                                    <input class="btn btn-outline-secondary mb-2" id="submit-button" type="submit" value="Update (Keep Fork)">
+                                    <input class="btn btn-outline-secondary mb-2" id="submit-button" type="submit" value="Update (Keep Upstream)">
+                                </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>
