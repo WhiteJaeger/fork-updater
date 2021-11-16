@@ -23,4 +23,12 @@ forkRows.each(function () {
     $(row).find('#update').each(function () {
         $(this).click({row: row}, postData)
     })
-})
+});
+
+$body = $("body");
+
+$(document).on({
+    ajaxStart: function() { $body.addClass("loading");    },
+     ajaxStop: function() { $body.removeClass("loading"); }
+});
+
