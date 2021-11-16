@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, json
 from subprocess import run, CompletedProcess
 from utils import get_forks
 
@@ -9,6 +9,13 @@ app = Flask(__name__)
 def hello_world():
     forks = get_forks()
     return render_template('home.html', names=list(forks.keys()), fork_urls=list(forks.values()))
+
+
+@app.route('/update', methods=['POST'])
+def update_fork():
+    data = json.loads(request.get_data().decode('utf-8'))
+    print(data)
+    return '0'
 
 
 if __name__ == '__main__':

@@ -14,6 +14,8 @@
 
     <link rel="shortcut icon" href="#">
 
+    <script defer type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+
     <title>Home</title>
 </head>
 <body>
@@ -32,10 +34,10 @@
                         <th scope="col" class="text-center">Actions</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="fork-table">
 
                         {% for forkName in names %}
-                            <tr id="{{ fork_urls[loop.index0] }}">
+                            <tr id="{{ fork_urls[loop.index0] }}" class="fork-row">
                                 <td>{{ forkName }}</td>
                                 <td><a href="{{ fork_urls[loop.index0] }}" target="_blank">{{ fork_urls[loop.index0] }}</a></td>
                                 <td>
