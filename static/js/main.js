@@ -11,7 +11,12 @@ function postData(event) {
         mimeType: 'application/json',
         processData: false,
         success: function (data) {
-            JSON.parse(data);
+            // JSON.parse(data);
+            if (data['returnCode'] === '0') {
+                alert('Fork updated!')
+            } else {
+                alert('Error!')
+            }
         }
     });
 }

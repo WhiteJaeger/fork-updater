@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, json
 from subprocess import run, CompletedProcess
 from utils import get_forks
+from constants import FORK_REPO_URL, UPSTREAM_REPO_URL
 import os
 
 
@@ -18,8 +19,13 @@ def hello_world():
 def update_fork():
     data = json.loads(request.get_data().decode('utf-8'))
     url = data.get('url')
-    rc: CompletedProcess = run(os.path.join(cur_dir, 'test.sh'))
-    return str(rc.returncode)
+    rc: CompletedProcess = run([os.path.join(cur_dir, 'update.sh'), url, UPSTREAM_REPO_URL], capture_output=True)
+
+    stdout = rc.stdout
+    stderr = rc.stderr
+
+    result = {'returnCode': str(rc.returncode)}
+    return json.dumps(result)
 
 
 if __name__ == '__main__':
