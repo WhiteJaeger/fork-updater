@@ -2,16 +2,16 @@
 
 # Arguments
 ## 1: tmp folder id
-## 2: fork name
-## 3: fork url
-## 4: upstream url
-## 5: user
+## 2: fork url
+## 3: upstream url
+## 4: user
+## 5: update strategy
 
 TMP_FOLDER_ID="$1"
-FORK_NAME="$2"
-FORK_URL="$3"
-UPSTREAM_URL="$4"
-GH_USER="$5"
+FORK_URL="$2"
+UPSTREAM_URL="$3"
+GH_USER="$4"
+STRATEGY="$5"
 
 # Create dir for fork
 mkdir -m 770 -p "/tmp/forkUpdate${TMP_FOLDER_ID}"
@@ -21,12 +21,16 @@ pushd "/tmp/forkUpdate${TMP_FOLDER_ID}"
 FORK_URL="${FORK_URL:8}"
 FORK_URL="https://x-access-token:${AUTH_TOKEN}@${FORK_URL}"
 
-git config --global user.name "${USER}"
-git config --global user.email "${USER}@users.noreply.github.com"
+echo "$FORK_URL"
 
-git clone "git@github.com:WhiteJaeger/mock-2021.git" fork
+git clone "${FORK_URL}" fork
 
 pushd fork
+
+git pull
+
+git config user.name "${GH_USER}"
+git config user.email "${GH_USER}@users.noreply.github.com"
 
 git remote add upstream "${UPSTREAM_URL}"
 
@@ -40,4 +44,4 @@ git push origin HEAD:main
 
 pushd /tmp
 
-rm -rf /tmp/forkUpdate
+rm -rf "/tmp/forkUpdate${TMP_FOLDER_ID}"

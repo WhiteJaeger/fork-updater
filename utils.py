@@ -1,4 +1,6 @@
 import requests
+import random
+import string
 from typing import Dict
 
 
@@ -10,3 +12,7 @@ def get_forks() -> Dict[str, str]:
         forks[fork['owner']['login']] = fork['html_url']
 
     return forks
+
+
+def generate_random_string() -> str:
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
