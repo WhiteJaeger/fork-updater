@@ -13,6 +13,8 @@ UPSTREAM_URL="$3"
 GH_USER="$4"
 STRATEGY="$5"
 
+echo "$STRATEGY"
+
 # Create dir for fork
 mkdir -m 770 -p "/tmp/forkUpdate${TMP_FOLDER_ID}"
 pushd "/tmp/forkUpdate${TMP_FOLDER_ID}"

@@ -19,9 +19,11 @@ def hello_world():
 def update_fork():
     data = json.loads(request.get_data().decode('utf-8'))
     url = data.get('url')
+    update_strategy = data.get('strategy')
     random_string = generate_random_string()
+    args = [random_string, url, UPSTREAM_REPO_URL, 'WhiteJaeger', update_strategy]
 
-    rc: CompletedProcess = run([os.path.join(cur_dir, 'update.sh'), url, UPSTREAM_REPO_URL], capture_output=True)
+    rc: CompletedProcess = run([os.path.join(cur_dir, 'update.sh'), *args], capture_output=True)
 
     stdout = rc.stdout
     stderr = rc.stderr

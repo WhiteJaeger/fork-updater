@@ -32,20 +32,10 @@
                         <th scope="col" class="text-center">Fork Name</th>
                         <th scope="col" class="text-center">URL</th>
                         <th scope="col" class="text-center">Actions</th>
+                        <th scope="col" class="text-center">Status</th>
                     </tr>
                     </thead>
                     <tbody id="fork-table">
-
-{#                        <tr id="https://github.com/WhiteJaeger/2021-2-level-labs" class="fork-row">#}
-{#                            <td><b>WhiteJaeger Hardcoded</b></td>#}
-{#                            <td><a href="https://github.com/WhiteJaeger/2021-2-level-labs" target="_blank">https://github.com/WhiteJaeger/2021-2-level-labs</a></td>#}
-{#                            <td>#}
-{#                                <input class="btn btn-outline-secondary mb-2" id="update" type="submit" value="Update">#}
-{#                                <input class="btn btn-outline-secondary mb-2" id="update-keep-fork" type="submit" value="Update (Keep Fork)">#}
-{#                                <input class="btn btn-outline-secondary mb-2" id="update-keep-upstream" type="submit" value="Update (Keep Upstream)">#}
-{#                            </td>#}
-{#                        </tr>#}
-
                         {% for forkName in names %}
                             <tr id="{{ fork_urls[loop.index0] }}" class="fork-row">
                                 <td>{{ forkName }}</td>
@@ -55,6 +45,7 @@
                                     <input class="btn btn-outline-secondary mb-2" id="update-keep-fork" type="submit" value="Update (Keep Fork)">
                                     <input class="btn btn-outline-secondary mb-2" id="update-keep-upstream" type="submit" value="Update (Keep Upstream)">
                                 </td>
+                                <td>SOME STATUS</td>
                             </tr>
                         {% endfor %}
                     </tbody>
