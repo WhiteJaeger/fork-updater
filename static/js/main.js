@@ -21,23 +21,6 @@ function postData(event) {
     });
 }
 
-
-const forkRows = $('#fork-table').children('.fork-row');
-forkRows.each(function () {
-    const row = this
-    $(row).find('#update').each(function () {
-        $(this).click({row: row, strategy: 'getNew'}, postData)
-    })
-
-    $(row).find('#update-keep-fork').each(function () {
-        $(this).click({row: row, strategy: 'keepFork'}, postData)
-    })
-
-    $(row).find('#update-keep-upstream').each(function () {
-        $(this).click({row: row, strategy: 'keepUpstream'}, postData)
-    })
-});
-
 $body = $("body");
 
 $(document).on({
@@ -45,3 +28,20 @@ $(document).on({
      ajaxStop: function() { $body.removeClass("loading"); }
 });
 
+$(document).ready(function () {
+    const forkRows = $('#fork-table').children('.fork-row');
+    forkRows.each(function () {
+        const row = this
+        $(row).find('#update').each(function () {
+            $(this).click({row: row, strategy: 'getNew'}, postData)
+        })
+
+        $(row).find('#update-keep-fork').each(function () {
+            $(this).click({row: row, strategy: 'keepFork'}, postData)
+        })
+
+        $(row).find('#update-keep-upstream').each(function () {
+            $(this).click({row: row, strategy: 'keepUpstream'}, postData)
+        })
+    });
+})

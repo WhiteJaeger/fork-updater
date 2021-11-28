@@ -6,7 +6,7 @@ import os
 
 
 app = Flask(__name__)
-cur_dir = os.path.dirname(os.path.abspath(__file__))
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @app.route('/')
@@ -23,10 +23,10 @@ def update_fork():
     random_string = generate_random_string()
     args = [random_string, url, UPSTREAM_REPO_URL, 'WhiteJaeger', update_strategy]
 
-    rc: CompletedProcess = run([os.path.join(cur_dir, 'update.sh'), *args], capture_output=True)
+    rc: CompletedProcess = run([os.path.join(CURRENT_DIR, 'update.sh'), *args], capture_output=True)
 
-    stdout = rc.stdout
-    stderr = rc.stderr
+    stdout = rc.stdout.decode('utf-8')
+    stderr = rc.stderr.decode('utf-8')
 
     result = {'returnCode': str(rc.returncode)}
     return json.dumps(result)

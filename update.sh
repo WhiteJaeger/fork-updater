@@ -58,7 +58,7 @@ elif [[ "$STRATEGY" == "keepFork" ]]; then
 
   done
 
-  git commit -m "get latest changes from the original repository"
+  git commit -m "get latest changes from the original repository" || true
 
 elif [[ "$STRATEGY" == "keepUpstream" ]]; then
   # Merge in favour of the upstream repository
@@ -71,7 +71,7 @@ elif [[ "$STRATEGY" == "keepUpstream" ]]; then
 
   done
 
-  git commit -m "get latest changes from the original repository"
+  git commit -m "get latest changes from the original repository" || true
 
 fi
 
