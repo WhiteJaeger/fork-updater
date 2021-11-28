@@ -2,7 +2,7 @@
 function postData(event) {
 
     const url = $(event.data.row).attr('id')
-    const strategy = $(event.data.strategy)
+    const strategy = event.data.strategy
 
 
     $.ajax({
