@@ -15,12 +15,13 @@ def get_db():
     return db
 
 
-def get_forks_from_db() -> Dict[str, str]:
+def get_forks_from_db() -> Dict[str, Dict[str, str]]:
     db = get_db()
     forks_from_db = db.execute('SELECT * FROM forks').fetchall()
     forks = {}
     for fork in forks_from_db:
-        forks[fork['name']] = fork['url']
+        forks[fork['name']] = {'url': fork['url'], 'status': fork['status']}
+
     db.close()
     return forks
 
@@ -51,7 +52,7 @@ def sync_forks():
         if fork:
             continue
         db.execute("INSERT INTO forks (name, url, status) VALUES (?, ?, ?)",
-                   (fork_name, fork_url, 'recently added')
+                   (fork_name, fork_url, 'Recently added')
                    )
     db.commit()
     db.close()

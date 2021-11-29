@@ -25,9 +25,12 @@ function syncForks() {
     $.ajax({
         url: '/sync-forks',
         method: 'POST',
+        mimeType: 'application/json',
         success: function (data) {
             if (data['result'] !== 'ok') {
                 alert('ERROR!')
+            } else {
+                location.reload();
             }
         }
     });
@@ -58,7 +61,5 @@ $(document).ready(function () {
         })
     });
 
-    $()
-
-
+    $('#sync-forks').click(syncForks)
 })

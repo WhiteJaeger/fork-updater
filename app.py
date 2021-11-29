@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, json
+from flask import Flask, render_template, request, json, redirect, url_for
 from subprocess import run, CompletedProcess
 from utils import generate_random_string
 from db import get_forks_from_db, sync_forks
@@ -9,9 +9,9 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
+def home():
     forks = get_forks_from_db()
-    return render_template('home.html', names=list(forks.keys()), fork_urls=list(forks.values()))
+    return render_template('home.html', forks=forks)
 
 
 @app.route('/update', methods=['POST'])
