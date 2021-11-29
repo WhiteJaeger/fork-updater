@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, json, redirect, url_for
-from subprocess import run, CompletedProcess
-from utils import generate_random_string
-from db import get_forks_from_db, sync_forks
-from constants import UPSTREAM_REPO_URL, CURRENT_DIR
 import os
+from subprocess import run, CompletedProcess
+
+from flask import Flask, render_template, request, json
+
+from constants import UPSTREAM_REPO_URL, CURRENT_DIR
+from db import get_forks_from_db, sync_forks
+from utils import generate_random_string
 
 app = Flask(__name__)
 
