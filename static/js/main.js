@@ -21,6 +21,19 @@ function postData(event) {
     });
 }
 
+function syncForks() {
+    $.ajax({
+        url: '/sync-forks',
+        method: 'POST',
+        success: function (data) {
+            if (data['result'] !== 'ok') {
+                alert('ERROR!')
+            }
+        }
+    });
+}
+
+
 $body = $("body");
 
 $(document).on({
@@ -44,4 +57,8 @@ $(document).ready(function () {
             $(this).click({row: row, strategy: 'keepUpstream'}, postData)
         })
     });
+
+    $()
+
+
 })

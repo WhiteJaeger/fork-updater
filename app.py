@@ -1,17 +1,16 @@
 from flask import Flask, render_template, request, json
 from subprocess import run, CompletedProcess
-from utils import get_forks, generate_random_string
-from constants import UPSTREAM_REPO_URL
+from utils import generate_random_string
+from db import get_forks_from_db, sync_forks
+from constants import UPSTREAM_REPO_URL, CURRENT_DIR
 import os
 
-
 app = Flask(__name__)
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @app.route('/')
 def hello_world():
-    forks = get_forks()
+    forks = get_forks_from_db()
     return render_template('home.html', names=list(forks.keys()), fork_urls=list(forks.values()))
 
 
@@ -30,6 +29,12 @@ def update_fork():
 
     result = {'returnCode': str(rc.returncode)}
     return json.dumps(result)
+
+
+@app.route('/sync-forks', methods=['POST'])
+def sync_forks_from_github():
+    sync_forks()
+    return json.dumps({'result': 'ok'})
 
 
 if __name__ == '__main__':

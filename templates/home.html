@@ -26,7 +26,9 @@
         <div class="col-md-8">
             <div class="container-md">
 
-                <table class="table table-bordered table-sm">
+                <h2>Fork Table</h2>
+
+                <table id="fork-table-main" class="table table-bordered table-sm">
                     <thead>
                     <tr>
                         <th scope="col" class="text-center">Fork Name</th>
@@ -50,6 +52,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <input class="btn btn-outline-secondary mb-2" id="sync-forks" type="submit" value="Sync forks">
             </div>
         </div>
     </div>
