@@ -25,11 +25,11 @@
     <table id="fork-table-main" class="table table-bordered">
         <thead>
             <tr>
-                <th scope="col" class="text-center">Fork Name</th>
-                <th scope="col" class="text-center">URL</th>
-                <th scope="col" class="text-center">Actions</th>
-                <th scope="col" class="text-center">Update Status</th>
-                <th scope="col" class="text-center">Fork-Upstream Status</th>
+                <th scope="col" class="text-center fs-4">Fork Name</th>
+                <th scope="col" class="text-center fs-4">URL</th>
+                <th scope="col" class="text-center fs-4">Actions</th>
+                <th scope="col" class="text-center fs-4">Update Status</th>
+                <th scope="col" class="text-center fs-4">Fork-Upstream Status</th>
             </tr>
         </thead>
 
@@ -38,7 +38,7 @@
                 <tr id="{{ forkData['url'] }}" class="fork-row">
                     <td>{{ forkName }}</td>
                     <td><a href="{{ forkData['url'] }}" target="_blank">{{ forkData['url'] }}</a></td>
-                    <td>
+                    <td class="fork-actions">
                         <input class="btn btn-outline-secondary mb-2" id="update" type="submit" value="Update">
                         <input class="btn btn-outline-secondary mb-2" id="update-keep-fork" type="submit"
                                value="Update (Keep Fork)">
@@ -46,9 +46,8 @@
                                value="Update (Keep Upstream)">
                     </td>
                     <td class="fork-update-status">
-                        <p><b>Update Status</b>: {{ forkData['status'] }}</p>
-                        <p><b>Last Update Time</b>: {{ forkData['update_time'] }}</p>
-                        <input class="btn btn-outline-secondary mb-2" id="sync-update-fork-status" type="submit" value="Sync status">
+                        <p><b>Update Status</b>: <span class="update-status-value">{{ forkData['status'] }}</span></p>
+                        <p><b>Last Update Time</b>: <span class="update-status-time">{{ forkData['update_time'] }}</span></p>
                     </td>
                     <td class="fork-upstream-status">
                         <p><b>Status</b>: fake data</p>

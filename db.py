@@ -1,9 +1,11 @@
-from flask import g
 import os
+import sqlite3
+from typing import Optional, Dict
+
+from flask import g
+
 from constants import CURRENT_DIR
 from utils import get_forks_from_github
-from typing import Optional, Dict
-import sqlite3
 
 
 def get_db():
@@ -20,7 +22,6 @@ def get_forks_from_db() -> Dict[str, Dict[str, str]]:
     forks_from_db = db.execute('SELECT * FROM forks').fetchall()
     forks = {}
     for fork in forks_from_db:
-
         update_time = fork['lastUpdateTime'] if fork['lastUpdateTime'] else 'has not been updated yet'
         forks[fork['name']] = {'url': fork['url'],
                                'status': fork['status'],

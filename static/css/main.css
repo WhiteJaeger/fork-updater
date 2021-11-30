@@ -29,6 +29,13 @@ body.loading .modal {
     display: block;
 }
 
+.fork-actions.loading {
+    background: rgba( 255, 255, 255, .8 )
+                url('http://i.stack.imgur.com/FhHRx.gif')
+                50% 50%
+                no-repeat;
+}
+
 
 #fork-table {
     margin-top: 20px;

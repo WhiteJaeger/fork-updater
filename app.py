@@ -1,3 +1,4 @@
+import datetime
 import os
 from subprocess import run, CompletedProcess
 
@@ -6,7 +7,6 @@ from flask import Flask, render_template, request, json
 from constants import UPSTREAM_REPO_URL, CURRENT_DIR
 from db import get_forks_from_db, sync_forks_list_with_github, get_db
 from utils import generate_random_string
-import datetime
 
 app = Flask(__name__)
 
@@ -30,14 +30,18 @@ def update_fork():
     stdout = rc.stdout.decode('utf-8')
     stderr = rc.stderr.decode('utf-8')
 
+    result = {'returnCode': str(rc.returncode)}
+
     if rc.returncode == 0:
+        cur_time = datetime.datetime.now()
         db = get_db()
         db.execute('UPDATE forks SET status = ?, lastUpdateTime = ? WHERE url = ?',
-                   ('updated', datetime.datetime.now(), url))
+                   ('updated', cur_time, url))
         db.commit()
         db.close()
+        result['status'] = 'updated'
+        result['lastUpdateTime'] = cur_time
 
-    result = {'returnCode': str(rc.returncode)}
     return json.dumps(result)
 
 

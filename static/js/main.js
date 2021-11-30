@@ -1,8 +1,14 @@
 
-function postData(event) {
+function updateFork(event) {
 
     const url = $(event.data.row).attr('id')
     const strategy = event.data.strategy
+
+    $(event.data.row).find('.fork-actions').addClass('loading');
+    const actionButtons = $(event.data.row).find('.fork-actions').children('.btn');
+    actionButtons.each(function () {
+        $(this).prop('disabled', true);
+    });
 
 
     $.ajax({
@@ -12,10 +18,15 @@ function postData(event) {
         mimeType: 'application/json',
         processData: false,
         success: function (data) {
-            if (data['returnCode'] === '0') {
-                alert('Fork updated!')
-            } else {
+            if (data['returnCode'] !== '0') {
                 alert(`Error! Code: ${data['returnCode']}`)
+            } else {
+                $(event.data.row).find('.update-status-value').text(data['status']);
+                $(event.data.row).find('.update-status-time').text(data['lastUpdateTime']);
+                $(event.data.row).find('.fork-actions').removeClass('loading');
+                actionButtons.each(function () {
+                    $(this).prop('disabled', false);
+                })
             }
         }
     });
@@ -46,15 +57,15 @@ $(document).ready(function () {
     forkRows.each(function () {
         const row = this
         $(row).find('#update').each(function () {
-            $(this).click({row: row, strategy: 'getNew'}, postData)
+            $(this).click({row: row, strategy: 'getNew'}, updateFork)
         })
 
         $(row).find('#update-keep-fork').each(function () {
-            $(this).click({row: row, strategy: 'keepFork'}, postData)
+            $(this).click({row: row, strategy: 'keepFork'}, updateFork)
         })
 
         $(row).find('#update-keep-upstream').each(function () {
-            $(this).click({row: row, strategy: 'keepUpstream'}, postData)
+            $(this).click({row: row, strategy: 'keepUpstream'}, updateFork)
         })
     });
 
