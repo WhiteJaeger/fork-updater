@@ -17,7 +17,7 @@ function updateFork(event) {
         data: JSON.stringify({'url': url, 'strategy': strategy}),
         mimeType: 'application/json',
         processData: false,
-        success: function (data) {
+        success: async function (data) {
             if (data['returnCode'] !== '0') {
                 alert(`Error! Code: ${data['returnCode']}`)
             } else {
@@ -26,7 +26,10 @@ function updateFork(event) {
                 $(event.data.row).find('.fork-actions').removeClass('loading');
                 actionButtons.each(function () {
                     $(this).prop('disabled', false);
-                })
+                });
+                $(event.data.row).addClass('table-success');
+                await new Promise(r => setTimeout(r, 500));
+                $(event.data.row).removeClass('table-success');
             }
         }
     });
