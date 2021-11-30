@@ -19,3 +19,4 @@ This app provides an interface to interact with forks of the given upstream.
    4. `export FLASK_ENV=development` - can be omitted if you require production mode.
 6. Run the app:
    1. `python -m flask run`
+7. Navigate to the `localhost:5000` in your browser.
