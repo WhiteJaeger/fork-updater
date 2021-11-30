@@ -20,6 +20,7 @@
 
 <div class="container-md">
     <h2 class="text-center">Fork Updater</h2>
+    <h3 class="text-center">Upstream url: <a href="{{ upstream }}" target="_blank">{{ upstream }}</a></h3>
 
     <table id="fork-table-main" class="table table-bordered">
         <thead>
@@ -27,7 +28,8 @@
                 <th scope="col" class="text-center">Fork Name</th>
                 <th scope="col" class="text-center">URL</th>
                 <th scope="col" class="text-center">Actions</th>
-                <th scope="col" class="text-center">Status</th>
+                <th scope="col" class="text-center">Update Status</th>
+                <th scope="col" class="text-center">Fork-Upstream Status</th>
             </tr>
         </thead>
 
@@ -42,10 +44,17 @@
                                value="Update (Keep Fork)">
                         <input class="btn btn-outline-secondary mb-2" id="update-keep-upstream" type="submit"
                                value="Update (Keep Upstream)">
-                        <input class="btn btn-outline-secondary mb-2" id="sync-fork-status" type="submit"
-                               value="Sync fork status">
                     </td>
-                    <td class="fork-status">{{ forkData['status'] }}</td>
+                    <td class="fork-update-status">
+                        <p><b>Update Status</b>: {{ forkData['status'] }}</p>
+                        <p><b>Last Update Time</b>: {{ forkData['update_time'] }}</p>
+                        <input class="btn btn-outline-secondary mb-2" id="sync-update-fork-status" type="submit" value="Sync status">
+                    </td>
+                    <td class="fork-upstream-status">
+                        <p><b>Status</b>: fake data</p>
+                        <p><b>Last Update Time</b>: fake data</p>
+                        <input class="btn btn-outline-secondary mb-2" id="sync-fork-upstream-status" type="submit" value="Sync status">
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

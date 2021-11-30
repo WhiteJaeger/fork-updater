@@ -5,7 +5,7 @@ from typing import Dict
 from bs4 import BeautifulSoup
 
 
-def get_forks() -> Dict[str, str]:
+def get_forks_from_github() -> Dict[str, str]:
     # forks_data = requests.get('https://api.github.com/repos/fipl-hse/2021-2-level-labs/forks?per_page=100').json()
     forks_data = requests.get('https://api.github.com/repos/student-org-mock/mock-2021/forks?per_page=100').json()
     forks = {}

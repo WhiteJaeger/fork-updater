@@ -1,7 +1,7 @@
 from flask import g
 import os
 from constants import CURRENT_DIR
-from utils import get_forks
+from utils import get_forks_from_github
 from typing import Optional, Dict
 import sqlite3
 
@@ -20,7 +20,11 @@ def get_forks_from_db() -> Dict[str, Dict[str, str]]:
     forks_from_db = db.execute('SELECT * FROM forks').fetchall()
     forks = {}
     for fork in forks_from_db:
-        forks[fork['name']] = {'url': fork['url'], 'status': fork['status']}
+
+        update_time = fork['lastUpdateTime'] if fork['lastUpdateTime'] else 'has not been updated yet'
+        forks[fork['name']] = {'url': fork['url'],
+                               'status': fork['status'],
+                               'update_time': update_time}
 
     db.close()
     return forks
@@ -44,8 +48,8 @@ def add_fork(name: str, url: str, status: str):
     db.close()
 
 
-def sync_forks():
-    fetched_forks = get_forks()
+def sync_forks_list_with_github():
+    fetched_forks = get_forks_from_github()
     db = get_db()
     for fork_name, fork_url in fetched_forks.items():
         fork = db.execute("SELECT * FROM forks WHERE url = ?", (fork_url,)).fetchone()

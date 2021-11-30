@@ -21,28 +21,25 @@ function postData(event) {
     });
 }
 
-function syncForks() {
+$body = $("body");
+
+function syncForksWithGithub() {
+    $body.addClass("loading");
     $.ajax({
-        url: '/sync-forks',
+        url: '/sync-forks-with-github',
         method: 'POST',
         mimeType: 'application/json',
         success: function (data) {
             if (data['result'] !== 'ok') {
                 alert('ERROR!')
             } else {
+                $body.removeClass("loading");
                 location.reload();
             }
         }
     });
 }
 
-
-$body = $("body");
-
-$(document).on({
-    ajaxStart: function() { $body.addClass("loading");    },
-     ajaxStop: function() { $body.removeClass("loading"); }
-});
 
 $(document).ready(function () {
     const forkRows = $('#fork-table').children('.fork-row');
@@ -61,5 +58,5 @@ $(document).ready(function () {
         })
     });
 
-    $('#sync-forks').click(syncForks)
+    $('#sync-forks').click(syncForksWithGithub);
 })
