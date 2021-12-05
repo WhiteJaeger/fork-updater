@@ -44,15 +44,16 @@
                                value="Update (Keep Fork)">
                         <input class="btn btn-outline-secondary mb-2" id="update-keep-upstream" type="submit"
                                value="Update (Keep Upstream)">
+                        <input class="btn btn-outline-secondary mb-2" id="sync-fork-upstream-status" type="submit"
+                               value="Sync Status (Upstream vs. Fork)">
                     </td>
                     <td class="fork-update-status">
-                        <p><b>Update Status</b>: <span class="update-status-value">{{ forkData['status'] }}</span></p>
-                        <p><b>Last Update Time</b>: <span class="update-status-time">{{ forkData['update_time'] }}</span></p>
+                        <p><b>Update Status</b>: <span class="update-status-value">{{ forkData['updateStatus'] }}</span></p>
+                        <p><b>Last Update Time</b>: <span class="update-status-time">{{ forkData['updateTime'] }}</span></p>
                     </td>
                     <td class="fork-upstream-status">
-                        <p><b>Status</b>: fake data</p>
-                        <p><b>Last Update Time</b>: fake data</p>
-                        <input class="btn btn-outline-secondary mb-2" id="sync-fork-upstream-status" type="submit" value="Sync status">
+                        <p><b>Status</b>: <span class="sync-status-value">{{ forkData['syncStatus'] }}</span></p>
+                        <p><b>Last Sync Time</b>: <span class="sync-status-time">{{ forkData['syncTime'] }}</span></p>
                     </td>
                 </tr>
             {% endfor %}

@@ -77,6 +77,8 @@ fi
 
 git push origin HEAD:main
 
+
+# Clean-up
 pushd /tmp
 
 rm -rf "/tmp/forkUpdate${TMP_FOLDER_ID}"

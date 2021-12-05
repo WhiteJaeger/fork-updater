@@ -23,9 +23,12 @@ def get_forks_from_db() -> Dict[str, Dict[str, str]]:
     forks = {}
     for fork in forks_from_db:
         update_time = fork['lastUpdateTime'] if fork['lastUpdateTime'] else 'has not been updated yet'
+        sync_time = fork['lastSyncTime'] if fork['lastSyncTime'] else 'has not been synced yet'
         forks[fork['name']] = {'url': fork['url'],
-                               'status': fork['status'],
-                               'update_time': update_time}
+                               'updateStatus': fork['updateStatus'],
+                               'syncStatus': fork['syncStatus'],
+                               'updateTime': update_time,
+                               'syncTime': sync_time}
 
     db.close()
     return forks
@@ -38,17 +41,6 @@ def get_fork_by_url(url: str) -> Optional[sqlite3.Row]:
     return fork
 
 
-def add_fork(name: str, url: str, status: str):
-    if get_fork_by_url(url):
-        return
-    db = get_db()
-    db.execute("INSERT INTO forks (name, url, status) VALUES (?, ?, ?)",
-               (name, url, status)
-               )
-    db.commit()
-    db.close()
-
-
 def sync_forks_list_with_github():
     fetched_forks = get_forks_from_github()
     db = get_db()
@@ -56,8 +48,8 @@ def sync_forks_list_with_github():
         fork = db.execute("SELECT * FROM forks WHERE url = ?", (fork_url,)).fetchone()
         if fork:
             continue
-        db.execute("INSERT INTO forks (name, url, status) VALUES (?, ?, ?)",
-                   (fork_name, fork_url, 'Recently added')
+        db.execute("INSERT INTO forks (name, url, syncStatus, updateStatus) VALUES (?, ?, ?, ?)",
+                   (fork_name, fork_url, 'Recently added', 'Recently added')
                    )
     db.commit()
     db.close()
