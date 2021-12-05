@@ -4,7 +4,7 @@ from subprocess import run, CompletedProcess
 
 from flask import Flask, render_template, request, json
 
-from constants import UPSTREAM_REPO_URL, CURRENT_DIR, PATH_TO_LOG_FILE, PATH_TO_ERROR_LOG_FILE, GH_USER
+from constants import UPSTREAM_REPO_URL, CURRENT_DIR, PATH_TO_LOG_FILE, PATH_TO_ERROR_LOG_FILE, GH_USER, UpdateStrategy
 from db import get_forks_from_db, sync_forks_list_with_github, get_db
 from utils import generate_random_string, write_log
 
@@ -37,12 +37,22 @@ def update_fork():
 
     if rc.returncode == 0:
         cur_time = datetime.datetime.now().ctime()
+
+        update_status = 'Updated with strategy: '
+        if update_strategy == UpdateStrategy.getNew.name:
+            update_status += UpdateStrategy.getNew.value
+        elif update_strategy == UpdateStrategy.keepFork.name:
+            update_status += UpdateStrategy.keepFork.value
+        elif update_strategy == UpdateStrategy.keepUpstream.name:
+            update_status += UpdateStrategy.keepUpstream.value
+
         db = get_db()
         db.execute('UPDATE forks SET updateStatus = ?, lastUpdateTime = ? WHERE url = ?',
-                   ('Updated', cur_time, fork_url))
+                   (update_status, cur_time, fork_url))
         db.commit()
         db.close()
-        result['updateStatus'] = 'Updated'
+
+        result['updateStatus'] = update_status
         result['lastUpdateTime'] = cur_time
 
     return json.dumps(result)
@@ -67,7 +77,7 @@ def update_fork_status():
     if rc.returncode != 0 and rc.returncode != 1:
         return 'UNKNOWN RETURN CODE!'
 
-    cur_time = datetime.datetime.now()
+    cur_time = datetime.datetime.now().ctime()
     db = get_db()
 
     if rc.returncode == 0:
