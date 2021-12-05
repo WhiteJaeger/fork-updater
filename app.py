@@ -4,9 +4,9 @@ from subprocess import run, CompletedProcess
 
 from flask import Flask, render_template, request, json
 
-from constants import UPSTREAM_REPO_URL, CURRENT_DIR
+from constants import UPSTREAM_REPO_URL, CURRENT_DIR, PATH_TO_LOG_FILE, PATH_TO_ERROR_LOG_FILE
 from db import get_forks_from_db, sync_forks_list_with_github, get_db
-from utils import generate_random_string
+from utils import generate_random_string, write_log
 
 app = Flask(__name__)
 
@@ -28,7 +28,10 @@ def update_fork():
     rc: CompletedProcess = run([os.path.join(CURRENT_DIR, 'update.sh'), *args], capture_output=True)
 
     stdout = rc.stdout.decode('utf-8')
+    write_log(PATH_TO_LOG_FILE, stdout)
+
     stderr = rc.stderr.decode('utf-8')
+    write_log(PATH_TO_ERROR_LOG_FILE, stderr)
 
     result = {'returnCode': str(rc.returncode)}
 
