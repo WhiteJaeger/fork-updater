@@ -31,6 +31,7 @@ def update_fork():
     write_log(PATH_TO_LOG_FILE, stdout)
 
     stderr = rc.stderr.decode('utf-8')
+
     write_log(PATH_TO_ERROR_LOG_FILE, stderr)
 
     result = {'returnCode': str(rc.returncode)}
