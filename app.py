@@ -11,6 +11,12 @@ from utils import generate_random_string, write_log
 
 def create_app():
     app = Flask(__name__)
+    with app.app_context():
+        with open(os.path.join(CURRENT_DIR, 'schema.sql')) as f:
+            db = get_db()
+            db.executescript(f.read())
+            db.commit()
+            db.close()
     return app
 
 
