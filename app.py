@@ -8,16 +8,22 @@ from constants import UPSTREAM_REPO_URL, CURRENT_DIR, PATH_TO_LOG_FILE, PATH_TO_
 from db import get_forks_from_db, sync_forks_list_with_github, get_db
 from utils import generate_random_string, write_log
 
-app = Flask(__name__)
+
+def create_app():
+    app = Flask(__name__)
+    return app
 
 
-@app.route('/')
+APP = create_app()
+
+
+@APP.route('/')
 def home():
     forks = get_forks_from_db()
     return render_template('home.html', forks=forks, upstream=UPSTREAM_REPO_URL)
 
 
-@app.route('/update', methods=['POST'])
+@APP.route('/update', methods=['POST'])
 def update_fork():
     data = json.loads(request.get_data().decode('utf-8'))
     fork_url = data.get('url')
@@ -58,7 +64,7 @@ def update_fork():
     return json.dumps(result)
 
 
-@app.route('/update-fork-status', methods=['POST'])
+@APP.route('/update-fork-status', methods=['POST'])
 def update_fork_status():
     data = json.loads(request.get_data().decode('utf-8'))
     fork_url = data.get('url')
@@ -96,11 +102,11 @@ def update_fork_status():
     return json.dumps(result)
 
 
-@app.route('/sync-forks-with-github', methods=['POST'])
+@APP.route('/sync-forks-with-github', methods=['POST'])
 def sync_forks_with_github():
     sync_forks_list_with_github()
     return json.dumps({'result': 'ok'})
 
 
 if __name__ == '__main__':
-    app.run()
+    APP.run()
