@@ -1,100 +1,116 @@
+function getActionButtonsFromRow(row) {
+    return row.find('.fork-actions').children('.btn');
+}
 
-function updateFork(event) {
-
-    const url = $(event.data.row).attr('id')
-    const strategy = event.data.strategy
-
-    $(event.data.row).find('.fork-actions').addClass('loading');
-    $(event.data.row).find('.fork-update-status').addClass('loading');
-    const actionButtons = $(event.data.row).find('.fork-actions').children('.btn');
-    actionButtons.each(function () {
+function disableActionButtons(buttons) {
+    buttons.each(function () {
         $(this).prop('disabled', true);
-    });
-
-
-    $.ajax({
-        url: '/update',
-        method: 'POST',
-        data: JSON.stringify({'url': url, 'strategy': strategy}),
-        mimeType: 'application/json',
-        processData: false,
-        success: async function (data) {
-            if (data['returnCode'] !== '0') {
-                alert(`Error! Code: ${data['returnCode']}`)
-                $(event.data.row).find('.fork-actions').removeClass('loading');
-                $(event.data.row).find('.fork-update-status').removeClass('loading');
-            } else {
-                $(event.data.row).find('.update-status-value').text(data['updateStatus']);
-                $(event.data.row).find('.update-status-time').text(data['lastUpdateTime']);
-                $(event.data.row).find('.fork-actions').removeClass('loading');
-                $(event.data.row).find('.fork-update-status').removeClass('loading');
-                actionButtons.each(function () {
-                    $(this).prop('disabled', false);
-                });
-                $(event.data.row).addClass('table-success');
-                await new Promise(r => setTimeout(r, 500));
-                $(event.data.row).removeClass('table-success');
-            }
-        }
     });
 }
 
-function updateForkStatus(event) {
+function enableActionButtons(buttons) {
+    buttons.each(function () {
+        $(this).prop('disabled', false);
+    });
+}
+
+
+async function updateFork(event) {
+
+    const url = $(event.data.row).attr('id');
+    const strategy = event.data.strategy;
+
+    $(event.data.row).find('.fork-actions').addClass('loading');
+    $(event.data.row).find('.fork-update-status').addClass('loading');
+    const actionButtons = getActionButtonsFromRow($(event.data.row));
+    disableActionButtons(actionButtons);
+
+    const response = await fetch('/update', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json;charset=utf-8'},
+        body: JSON.stringify({'url': url, 'strategy': strategy})
+    });
+
+    if (response.ok) {
+        const result = await response.json();
+        if (result['returnCode'] !== '0') {
+            alert(`Error! Code: ${result['returnCode']}`);
+            $(event.data.row).find('.fork-actions').removeClass('loading');
+            $(event.data.row).find('.fork-update-status').removeClass('loading');
+            return;
+        }
+
+        $(event.data.row).find('.update-status-value').text(result['updateStatus']);
+        $(event.data.row).find('.update-status-time').text(result['lastUpdateTime']);
+
+        $(event.data.row).find('.fork-actions').removeClass('loading');
+        $(event.data.row).find('.fork-update-status').removeClass('loading');
+
+        enableActionButtons(actionButtons);
+
+        $(event.data.row).addClass('table-success');
+        await new Promise(r => setTimeout(r, 500));
+        $(event.data.row).removeClass('table-success');
+    } else {
+        alert('Error in server request!');
+        $(event.data.row).find('.fork-actions').removeClass('loading');
+        $(event.data.row).find('.fork-update-status').removeClass('loading');
+    }
+}
+
+async function updateForkStatus(event) {
 
     const url = $(event.data.row).attr('id')
 
     $(event.data.row).find('.fork-upstream-status').addClass('loading');
     $(event.data.row).find('.fork-actions').addClass('loading');
-    const actionButtons = $(event.data.row).find('.fork-actions').children('.btn');
-    actionButtons.each(function () {
-        $(this).prop('disabled', true);
-    });
+    const actionButtons = getActionButtonsFromRow($(event.data.row));
+    disableActionButtons(actionButtons);
 
-
-    $.ajax({
-        url: '/update-fork-status',
+    const response = await fetch('/update-fork-status', {
         method: 'POST',
-        data: JSON.stringify({'url': url}),
-        mimeType: 'application/json',
-        processData: false,
-        success: async function (data) {
-            if (data['returnCode'] !== '0' && data['returnCode'] !== '1') {
-                alert(`Error! Code: ${data['returnCode']}`)
-                $(event.data.row).find('.fork-actions').removeClass('loading');
-                $(event.data.row).find('.fork-upstream-status').removeClass('loading');
-            } else {
-                $(event.data.row).find('.sync-status-value').text(data['syncStatus']);
-                $(event.data.row).find('.sync-status-time').text(data['lastSyncTime']);
-                $(event.data.row).find('.fork-actions').removeClass('loading');
-                $(event.data.row).find('.fork-upstream-status').removeClass('loading');
-                actionButtons.each(function () {
-                    $(this).prop('disabled', false);
-                });
-                $(event.data.row).addClass('table-success');
-                await new Promise(r => setTimeout(r, 500));
-                $(event.data.row).removeClass('table-success');
-            }
-        }
+        headers: {'Content-Type': 'application/json;charset=utf-8'},
+        body: JSON.stringify({'url': url})
     });
+
+    if (response.ok) {
+        const result = await response.json();
+        if (result['returnCode'] !== '0' && result['returnCode'] !== '1') {
+            alert(`Error! Code: ${result['returnCode']}`);
+            $(event.data.row).find('.fork-actions').removeClass('loading');
+            $(event.data.row).find('.fork-upstream-status').removeClass('loading');
+            return;
+        }
+
+        $(event.data.row).find('.sync-status-value').text(result['syncStatus']);
+        $(event.data.row).find('.sync-status-time').text(result['lastSyncTime']);
+
+        $(event.data.row).find('.fork-actions').removeClass('loading');
+        $(event.data.row).find('.fork-upstream-status').removeClass('loading');
+        enableActionButtons(actionButtons);
+
+        $(event.data.row).addClass('table-success');
+        await new Promise(r => setTimeout(r, 500));
+        $(event.data.row).removeClass('table-success');
+    } else {
+        alert('Error!');
+        $(event.data.row).find('.fork-actions').removeClass('loading');
+        $(event.data.row).find('.fork-upstream-status').removeClass('loading');
+    }
 }
 
 $body = $("body");
 
-function syncForksWithGithub() {
-    $body.addClass("loading");
-    $.ajax({
-        url: '/sync-forks-with-github',
-        method: 'POST',
-        mimeType: 'application/json',
-        success: function (data) {
-            if (data['result'] !== 'ok') {
-                alert('ERROR!')
-            } else {
-                $body.removeClass("loading");
-                location.reload();
-            }
-        }
-    });
+async function syncForksWithGithub() {
+    $body.addClass('loading');
+    const response = await fetch('/sync-forks-with-github');
+    const result = await response.json();
+    if (result['result'] !== 'ok') {
+        alert('ERROR!')
+    } else {
+        $body.removeClass('loading');
+        location.reload();
+    }
 }
 
 

@@ -4,7 +4,7 @@ from subprocess import run, CompletedProcess
 
 from flask import Flask, render_template, request, json
 
-from constants import UPSTREAM_REPO_URL, CURRENT_DIR, PATH_TO_LOG_FILE, PATH_TO_ERROR_LOG_FILE, GH_USER, UpdateStrategy
+from constants import UPSTREAM_REPO_URL, CURRENT_DIR, PATH_TO_SCRIPTS, PATH_TO_LOG_FILE, PATH_TO_ERROR_LOG_FILE, GH_USER, UpdateStrategy
 from db import get_forks_from_db, sync_forks_list_with_github, get_db
 from utils import generate_random_string, write_log
 
@@ -37,7 +37,7 @@ def update_fork():
     random_string = generate_random_string()
     args = [random_string, fork_url, UPSTREAM_REPO_URL, GH_USER, update_strategy]
 
-    rc: CompletedProcess = run([os.path.join(CURRENT_DIR, 'update.sh'), *args], capture_output=True)
+    rc: CompletedProcess = run([os.path.join(PATH_TO_SCRIPTS, 'update.sh'), *args], capture_output=True)
 
     stdout = rc.stdout.decode('utf-8')
     write_log(PATH_TO_LOG_FILE, stdout)
@@ -76,7 +76,8 @@ def update_fork_status():
     fork_url = data.get('url')
     random_string = generate_random_string()
     args = [random_string, fork_url, UPSTREAM_REPO_URL, GH_USER]
-    rc: CompletedProcess = run([os.path.join(CURRENT_DIR, 'check_if_fork_has_conflict.sh'), *args], capture_output=True)
+    rc: CompletedProcess = run([os.path.join(PATH_TO_SCRIPTS, 'check_if_fork_has_conflict.sh'), *args],
+                               capture_output=True)
 
     stdout = rc.stdout.decode('utf-8')
     write_log(PATH_TO_LOG_FILE, stdout)
@@ -108,7 +109,7 @@ def update_fork_status():
     return json.dumps(result)
 
 
-@APP.route('/sync-forks-with-github', methods=['POST'])
+@APP.route('/sync-forks-with-github', methods=['GET'])
 def sync_forks_with_github():
     sync_forks_list_with_github()
     return json.dumps({'result': 'ok'})
