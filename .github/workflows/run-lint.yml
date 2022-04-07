@@ -27,4 +27,7 @@ jobs:
           python -m pip install -r requirements.txt
       - name: Run lint check
         run: |
+          pushd ..
+          mv fork-updater fork_updater
+          popd
           pylint .
