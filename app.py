@@ -4,9 +4,15 @@ from subprocess import run, CompletedProcess
 
 from flask import Flask, render_template, request, json
 
-from constants import UPSTREAM_REPO_URL, CURRENT_DIR, PATH_TO_SCRIPTS, PATH_TO_LOG_FILE, PATH_TO_ERROR_LOG_FILE, GH_USER, UpdateStrategy
+from constants import (UPSTREAM_REPO_URL,
+                       CURRENT_DIR,
+                       PATH_TO_SCRIPTS,
+                       GH_USER,
+                       UpdateStrategyMessages,
+                       LOGGER,
+                       SyncStatusMessages)
 from db import get_forks_from_db, sync_forks_list_with_github, get_db
-from utils import generate_random_string, write_log
+from utils import generate_random_string
 
 
 def create_app():
@@ -40,23 +46,23 @@ def update_fork():
     rc: CompletedProcess = run([os.path.join(PATH_TO_SCRIPTS, 'update.sh'), *args], capture_output=True)
 
     stdout = rc.stdout.decode('utf-8')
-    write_log(PATH_TO_LOG_FILE, stdout)
+    LOGGER.debug(stdout)
 
     stderr = rc.stderr.decode('utf-8')
-    write_log(PATH_TO_ERROR_LOG_FILE, stderr)
+    LOGGER.debug(stderr)
 
     result = {'returnCode': str(rc.returncode)}
 
     if rc.returncode == 0:
         cur_time = datetime.datetime.now().ctime()
 
-        update_status = 'Updated with strategy: '
-        if update_strategy == UpdateStrategy.getNew.name:
-            update_status += UpdateStrategy.getNew.value
-        elif update_strategy == UpdateStrategy.keepFork.name:
-            update_status += UpdateStrategy.keepFork.value
-        elif update_strategy == UpdateStrategy.keepUpstream.name:
-            update_status += UpdateStrategy.keepUpstream.value
+        update_status = None
+        if update_strategy == UpdateStrategyMessages.getNew.name:
+            update_status = str(UpdateStrategyMessages.getNew)
+        elif update_strategy == UpdateStrategyMessages.keepFork.name:
+            update_status = str(UpdateStrategyMessages.keepFork)
+        elif update_strategy == UpdateStrategyMessages.keepUpstream.name:
+            update_status = str(UpdateStrategyMessages.keepUpstream)
 
         db = get_db()
         db.execute('UPDATE forks SET updateStatus = ?, lastUpdateTime = ? WHERE url = ?',
@@ -80,10 +86,10 @@ def update_fork_status():
                                capture_output=True)
 
     stdout = rc.stdout.decode('utf-8')
-    write_log(PATH_TO_LOG_FILE, stdout)
+    LOGGER.debug(stdout)
 
     stderr = rc.stderr.decode('utf-8')
-    write_log(PATH_TO_ERROR_LOG_FILE, stderr)
+    LOGGER.debug(stderr)
 
     # 0 - no conflict, 1 - conflict
     result = {'returnCode': str(rc.returncode)}
@@ -97,11 +103,11 @@ def update_fork_status():
 
         db.execute('UPDATE forks SET syncStatus = ?, lastSyncTime = ? WHERE url = ?',
                    ('No conflict', cur_time, fork_url))
-        result['syncStatus'] = 'No conflict'
+        result['syncStatus'] = str(SyncStatusMessages.no_conflict)
     elif rc.returncode == 1:
         db.execute('UPDATE forks SET syncStatus = ?, lastSyncTime = ? WHERE url = ?',
                    ('Conflict', cur_time, fork_url))
-        result['syncStatus'] = 'Conflict'
+        result['syncStatus'] = str(SyncStatusMessages.conflict)
 
     db.commit()
     db.close()
