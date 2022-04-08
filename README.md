@@ -17,6 +17,7 @@ This app provides an interface to interact with forks of the given upstream.
    2. `export AUTH_TOKEN=${AUTH_TOKEN}` - the GitHub Personal Access Token with access to the forks.
    3. `export FLASK_DEBUG=1` - can be omitted if you require production mode.
    4. `export FLASK_ENV=development` - can be omitted if you require production mode.
+   4. `export SECRET_KEY=${SECRET_KEY}` - secret key.
 6. Run the app:
    1. `python -m flask run`
 7. Navigate to the `localhost:5000` in your browser.

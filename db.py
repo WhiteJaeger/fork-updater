@@ -3,8 +3,10 @@ import sqlite3
 from typing import Optional, Dict
 
 from flask import g
+from werkzeug.security import generate_password_hash
 
 from constants import CURRENT_DIR, GeneralStatusMessages
+from models import User
 from utils import get_forks_from_github
 
 
@@ -30,15 +32,8 @@ def get_forks_from_db() -> Dict[str, Dict[str, str]]:
                                'updateTime': update_time,
                                'syncTime': sync_time}
 
-    db.close()
+    db.commit()
     return forks
-
-
-def get_fork_by_url(url: str) -> Optional[sqlite3.Row]:
-    db = get_db()
-    fork = db.execute("SELECT * FROM forks WHERE url = ?", (url,)).fetchone()
-    db.close()
-    return fork
 
 
 def sync_forks_list_with_github():
@@ -55,4 +50,26 @@ def sync_forks_list_with_github():
                     str(GeneralStatusMessages.recently_added))
                    )
     db.commit()
-    db.close()
+
+
+def add_user(email: str, password: str):
+    db = get_db()
+    db.execute("INSERT INTO users (email, password) VALUES (?, ?)", (email, generate_password_hash(password)))
+    db.commit()
+
+
+def get_user_by_email(email: str) -> Optional[sqlite3.Row]:
+    db = get_db()
+    user = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+    db.commit()
+    return user
+
+
+def get_user_by_id(user_id: int) -> Optional[User]:
+    db = get_db()
+    user = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    db.commit()
+    if user:
+        return User(user['id'], user['email'], user['password'])
+    else:
+        return None

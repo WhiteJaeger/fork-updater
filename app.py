@@ -2,7 +2,9 @@ import datetime
 import os
 from subprocess import run, CompletedProcess
 
-from flask import Flask, render_template, request, json
+from flask import Flask, render_template, request, json, flash, url_for, redirect
+from flask_login import LoginManager, login_user, login_required
+from werkzeug.security import check_password_hash
 
 from constants import (UPSTREAM_REPO_URL,
                        CURRENT_DIR,
@@ -11,18 +13,29 @@ from constants import (UPSTREAM_REPO_URL,
                        UpdateStrategyMessages,
                        LOGGER,
                        SyncStatusMessages)
-from db import get_forks_from_db, sync_forks_list_with_github, get_db
+from db import get_forks_from_db, sync_forks_list_with_github, get_db, get_user_by_email, get_user_by_id
+from models import User
 from utils import generate_random_string
 
 
 def create_app():
     app = Flask(__name__)
+    app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+
+    login_manager = LoginManager()
+    login_manager.login_view = 'login'
+    login_manager.init_app(app)
+
     with app.app_context():
         with open(os.path.join(CURRENT_DIR, 'schema.sql')) as f:
             db = get_db()
             db.executescript(f.read())
             db.commit()
-            db.close()
+
+        @login_manager.user_loader
+        def load_user(user_id: int):
+            return get_user_by_id(user_id)
+
     return app
 
 
@@ -30,12 +43,14 @@ APP = create_app()
 
 
 @APP.route('/')
+@login_required
 def home():
     forks = get_forks_from_db()
     return render_template('home.html', forks=forks, upstream=UPSTREAM_REPO_URL)
 
 
 @APP.route('/update', methods=['POST'])
+@login_required
 def update_fork():
     data = json.loads(request.get_data().decode('utf-8'))
     fork_url = data.get('url')
@@ -68,7 +83,6 @@ def update_fork():
         db.execute('UPDATE forks SET updateStatus = ?, lastUpdateTime = ? WHERE url = ?',
                    (update_status, cur_time, fork_url))
         db.commit()
-        db.close()
 
         result['updateStatus'] = update_status
         result['lastUpdateTime'] = cur_time
@@ -77,6 +91,7 @@ def update_fork():
 
 
 @APP.route('/update-fork-status', methods=['POST'])
+@login_required
 def update_fork_status():
     data = json.loads(request.get_data().decode('utf-8'))
     fork_url = data.get('url')
@@ -110,15 +125,31 @@ def update_fork_status():
         result['syncStatus'] = str(SyncStatusMessages.conflict)
 
     db.commit()
-    db.close()
     result['lastSyncTime'] = cur_time
     return json.dumps(result)
 
 
 @APP.route('/sync-forks-with-github', methods=['GET'])
+@login_required
 def sync_forks_with_github():
     sync_forks_list_with_github()
     return json.dumps({'result': 'ok'})
+
+
+@APP.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = get_user_by_email(email)
+        if user and check_password_hash(user['password'], password):
+            login_user(User(user['id'], user['email'], user['password']))
+            return redirect(url_for('home'))
+        else:
+            flash('Incorrect email and/or password!')
+            return render_template('login.html')
+
+    return render_template('login.html')
 
 
 if __name__ == '__main__':
