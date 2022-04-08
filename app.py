@@ -3,7 +3,7 @@ import os
 from subprocess import run, CompletedProcess
 
 from flask import Flask, render_template, request, json, flash, url_for, redirect
-from flask_login import LoginManager, login_user, login_required
+from flask_login import LoginManager, login_user, login_required, logout_user
 from werkzeug.security import check_password_hash
 
 from constants import (UPSTREAM_REPO_URL,
@@ -12,8 +12,15 @@ from constants import (UPSTREAM_REPO_URL,
                        GH_USER,
                        UpdateStrategyMessages,
                        LOGGER,
-                       SyncStatusMessages)
-from db import get_forks_from_db, sync_forks_list_with_github, get_db, get_user_by_email, get_user_by_id
+                       SyncStatusMessages,
+                       ADMIN_EMAIL,
+                       ADMIN_PASSWORD)
+from db import (get_forks_from_db,
+                sync_forks_list_with_github,
+                get_db,
+                get_user_by_email,
+                get_user_by_id,
+                add_user)
 from models import User
 from utils import generate_random_string
 
@@ -35,6 +42,10 @@ def create_app():
         @login_manager.user_loader
         def load_user(user_id: int):
             return get_user_by_id(user_id)
+
+        if ADMIN_EMAIL and ADMIN_PASSWORD:
+            if not get_user_by_email(ADMIN_EMAIL):
+                add_user(ADMIN_EMAIL, ADMIN_PASSWORD)
 
     return app
 
@@ -150,6 +161,13 @@ def login():
             return render_template('login.html')
 
     return render_template('login.html')
+
+
+@APP.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':

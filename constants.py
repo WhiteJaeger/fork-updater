@@ -9,6 +9,8 @@ PATH_TO_SCRIPTS = os.path.join(CURRENT_DIR, 'scripts')
 PATH_TO_LOG_FILE = os.path.join(CURRENT_DIR, 'log.txt')
 PATH_TO_ERROR_LOG_FILE = os.path.join(CURRENT_DIR, 'error_log.txt')
 GH_USER = 'WhiteJaeger'
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')
 
 
 class GeneralStatusMessages(enum.Enum):
