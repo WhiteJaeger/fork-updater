@@ -2,7 +2,7 @@ import os
 import sqlite3
 from typing import Optional, Dict
 
-from flask import g, current_app
+from flask import g
 from werkzeug.security import generate_password_hash
 
 from constants import CURRENT_DIR, GeneralStatusMessages

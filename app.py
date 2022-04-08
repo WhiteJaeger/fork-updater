@@ -128,11 +128,11 @@ def update_fork_status():
     if rc.returncode == 0:
 
         db.execute('UPDATE forks SET syncStatus = ?, lastSyncTime = ? WHERE url = ?',
-                   ('No conflict', cur_time, fork_url))
+                   (str(SyncStatusMessages.no_conflict), cur_time, fork_url))
         result['syncStatus'] = str(SyncStatusMessages.no_conflict)
     elif rc.returncode == 1:
         db.execute('UPDATE forks SET syncStatus = ?, lastSyncTime = ? WHERE url = ?',
-                   ('Conflict', cur_time, fork_url))
+                   (str(SyncStatusMessages.conflict), cur_time, fork_url))
         result['syncStatus'] = str(SyncStatusMessages.conflict)
 
     db.commit()
