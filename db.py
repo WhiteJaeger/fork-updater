@@ -54,7 +54,7 @@ def sync_forks_list_with_github():
 
 def add_user(email: str, password: str):
     db = get_db()
-    db.execute("INSERT INTO users (email, password) VALUES (?, ?)", (email, generate_password_hash(password)))
+    db.execute("INSERT OR REPLACE INTO users (email, password) VALUES (?, ?)", (email, generate_password_hash(password)))
     db.commit()
 
 
