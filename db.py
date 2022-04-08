@@ -2,7 +2,7 @@ import os
 import sqlite3
 from typing import Optional, Dict
 
-from flask import g
+from flask import g, current_app
 from werkzeug.security import generate_password_hash
 
 from constants import CURRENT_DIR, GeneralStatusMessages
@@ -73,3 +73,8 @@ def get_user_by_id(user_id: int) -> Optional[User]:
         return User(user['id'], user['email'], user['password'])
     else:
         return None
+
+
+def configure_admin_user(email: str, password: str):
+    if not get_user_by_email(email):
+        add_user(email, password)

@@ -1,7 +1,6 @@
 import datetime
 import os
 from subprocess import run, CompletedProcess
-from time import sleep
 
 from flask import Flask, render_template, request, json, flash, url_for, redirect
 from flask_login import LoginManager, login_user, login_required, logout_user
@@ -21,7 +20,7 @@ from db import (get_forks_from_db,
                 get_db,
                 get_user_by_email,
                 get_user_by_id,
-                add_user)
+                configure_admin_user)
 from models import User
 from utils import generate_random_string
 
@@ -44,15 +43,14 @@ def create_app():
         def load_user(user_id: int):
             return get_user_by_id(user_id)
 
-        if ADMIN_EMAIL and ADMIN_PASSWORD:
-            sleep(10)
-            if not get_user_by_email(ADMIN_EMAIL):
-                add_user(ADMIN_EMAIL, ADMIN_PASSWORD)
-
     return app
 
 
 APP = create_app()
+
+if ADMIN_EMAIL and ADMIN_PASSWORD:
+    with APP.app_context():
+        configure_admin_user(ADMIN_EMAIL, ADMIN_PASSWORD)
 
 
 @APP.route('/')
