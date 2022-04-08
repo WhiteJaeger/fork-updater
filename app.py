@@ -1,6 +1,7 @@
 import datetime
 import os
 from subprocess import run, CompletedProcess
+from time import sleep
 
 from flask import Flask, render_template, request, json, flash, url_for, redirect
 from flask_login import LoginManager, login_user, login_required, logout_user
@@ -44,6 +45,7 @@ def create_app():
             return get_user_by_id(user_id)
 
         if ADMIN_EMAIL and ADMIN_PASSWORD:
+            sleep(10)
             if not get_user_by_email(ADMIN_EMAIL):
                 add_user(ADMIN_EMAIL, ADMIN_PASSWORD)
 
